@@ -13,14 +13,29 @@ jobs:
  
     steps:
     - uses: actions/checkout@v1
+    
+    - name: Build Docker image
+        uses: actions/docker/cli@master
+        with:
+          args: "build . --tag gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }}"
 
-    - name: Google Cloud Auth
-      uses: actions/gcloud/auth@master
-      env:
-        GCLOUD_AUTH: ${{ secrets.GCLOUD_AUTH }}
+      - name: Authenticate into Google Cloud Platform
+        uses: actions/gcloud/auth@master
+        env:
+          GCLOUD_AUTH: ${{ secrets.GCLOUD_AUTH }}
 
-    - name: Google Cloud deploy
-      uses: actions/gcloud/cli@master
-      with:
-        args: components install beta --quiet && gcloud projects list && gcloud config set project mashhoodr && gcloud builds submit --tag gcr.io/mashhoodr/helloworld && gcloud beta run deploy --image gcr.io/mashhoodr/helloworld --platform managed
-          
+      - name: Configure Docker to use Google Cloud Platform
+        uses: actions/gcloud/cli@master
+        with:
+          args: "auth configure-docker --quiet"
+
+      - name: Push image to Google Cloud Container Registry
+        uses: actions/gcloud/cli@master
+        with:
+          entrypoint: sh
+          args: -c "docker push gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }}"
+
+      - name: Install beta commands and deploy on cloud run
+        uses: actions/gcloud/cli@master
+        with:
+          args: "components install beta --quiet && gcloud beta run deploy ${{ secrets.GCLOUD_APP_NAME }} --quiet --image gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }} --project ${{ secrets.GCLOUD_PROJECT }} --platform managed"
