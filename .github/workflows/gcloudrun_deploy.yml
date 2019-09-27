@@ -29,13 +29,13 @@ jobs:
       with:
         args: "auth configure-docker --quiet"
 
-    - name: Push image to Google Cloud Container Registry
+    - name: Push image to GCR
       uses: actions/gcloud/cli@master
       with:
         entrypoint: sh
         args: -c "docker push gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }}"
 
-    - name: Install beta commands and deploy on cloud run
+    - name: Install beta commands and deploy
       uses: actions/gcloud/cli@master
       with:
-        args: "components install beta --quiet && gcloud beta run deploy ${{ secrets.GCLOUD_APP_NAME }} --quiet --image gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }} --region us-central1-a --project ${{ secrets.GCLOUD_PROJECT }} --platform managed"
+        args: "components install beta --quiet && gcloud beta run deploy helloworld --quiet --image gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }} --region us-central1-a --project ${{ secrets.GCLOUD_PROJECT }} --platform managed"
