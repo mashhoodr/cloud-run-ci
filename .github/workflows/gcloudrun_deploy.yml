@@ -22,5 +22,5 @@ jobs:
     - name: Google Cloud deploy
       uses: actions/gcloud/cli@master
       with:
-        args: components install beta --quiet && gcloud builds submit --project mashhoodr --tag gcr.io/mashhoodr/helloworld && gcloud beta run deploy --image gcr.io/mashhoodr/helloworld --project mashhoodr --platform managed
+        args: components install beta --quiet && gcloud config set project mashhoodr && gcloud builds submit --tag gcr.io/mashhoodr/helloworld && gcloud beta run deploy --image gcr.io/mashhoodr/helloworld --platform managed
           
