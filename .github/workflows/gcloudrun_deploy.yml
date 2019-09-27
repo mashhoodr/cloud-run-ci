@@ -19,18 +19,8 @@ jobs:
       env:
         GCLOUD_AUTH: ${{ secrets.GCLOUD_AUTH }}
 
-    - name: Google Cloud beta components
-      uses: actions/gcloud/cli@master
-      with:
-        args: components install beta
-
-    - name: Google Cloud build
-      uses: actions/gcloud/cli@master
-      with:
-        args: builds submit --tag gcr.io/mashhoodr/helloworld
-
     - name: Google Cloud deploy
       uses: actions/gcloud/cli@master
       with:
-        args: beta run deploy --image gcr.io/mashhoodr/helloworld --platform managed
+        args: components install beta --quiet && gcloud builds submit --tag gcr.io/mashhoodr/helloworld && gcloud beta run deploy --image gcr.io/mashhoodr/helloworld --project mashhoodr --platform managed
           
