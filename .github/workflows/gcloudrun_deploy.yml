@@ -13,11 +13,11 @@ jobs:
  
     steps:
     - uses: actions/checkout@v1
-      env:
-        GCLOUD_AUTH: ${{ secrets.GCLOUD_AUTH }}
 
     - name: Github Action for Docker
       uses: actions/gcloud/auth@master
+      env:
+        GCLOUD_AUTH: ${{ secrets.GCLOUD_AUTH }}
 
     - name: Google Cloud beta components
       uses: actions/gcloud/cli@master
